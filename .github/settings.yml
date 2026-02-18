@@ -1,24 +1,25 @@
-description: "Free AI Web Search & Grounding for VS Code. Open-source Perplexity alternative powered by Gemini, Google Search, and Deep Page Analysis (MCP Server)."
-topics:
-  - mcp-server
-  - gemini-api
-  - vscode-extension
-  - google-search-grounding
-  - ai-search
-  - perplexity-alternative
-  - web-grounding
-  - deep-research
-  - model-context-protocol
-  - copilot-tools
-  - llm-tool-use
-  - open-source-ai
-  - python
-  - developer-tools
-  - free-api
-  - generative-ai
-  - coding-assistant
-  - agent-tools
-  - vscode
-  - prompt-engineering
-  - context-aware
-  - google-ai-studio
+repository:
+  description: "Free AI Web Search & Grounding for VS Code. Open-source Perplexity alternative powered by Gemini, Google Search, and Deep Page Analysis (MCP Server)."
+  topics:
+    - mcp-server
+    - gemini-api
+    - vscode-extension
+    - google-search-grounding
+    - ai-search
+    - perplexity-alternative
+    - web-grounding
+    - deep-research
+    - model-context-protocol
+    - copilot-tools
+    - llm-tool-use
+    - open-source-ai
+    - python
+    - developer-tools
+    - free-api
+    - generative-ai
+    - coding-assistant
+    - agent-tools
+    - vscode
+    - prompt-engineering
+    - context-aware
+    - google-ai-studio
