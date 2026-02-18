@@ -1,0 +1,22 @@
+description: "Free Perplexity-style web search for VS Code via Gemini's Grounding with Google Search + URL Context. MCP server with real-time search, full page analysis, and source citations."
+topics:
+  - mcp
+  - mcp-server
+  - model-context-protocol
+  - gemini
+  - gemini-api
+  - google-search
+  - google-gemini
+  - perplexity
+  - web-search
+  - url-context
+  - grounding
+  - vscode
+  - vscode-copilot
+  - copilot
+  - ai-search
+  - search-engine
+  - free-api
+  - google-ai-studio
+  - python
+  - developer-tools
