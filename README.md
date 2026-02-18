@@ -73,7 +73,7 @@ graph LR
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/nav9v/gemini-mcp-server.git
+git clone https://github.com/nav9v/gemini-search-mcp.git
 cd gemini-mcp-server
 ```
 
