@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "gemini-search": {
+      "command": "python",
+      "args": [
+        "gemini_search_mcp.py"
+      ],
+      "cwd": "/absolute/path/to/gemini-search-mcp",
+      "env": {
+        "GEMINI_API_KEY": "optional-if-using-dotenv-file",
+        "GEMINI_MODEL": "gemini-2.5-flash"
+      }
+    }
+  }
+}

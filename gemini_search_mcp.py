@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Tool, TextContent
+from mcp.types import Tool, TextContent, Prompt, PromptMessage, Resource
 from google import genai
 from google.genai.types import GenerateContentConfig
 
@@ -131,6 +131,78 @@ TOOLS = [
     ),
 ]
 
+PROMPTS = [
+    Prompt(
+        name="web-search",
+        description="Search the web for up-to-date information on any topic",
+        arguments=[
+            {
+                "name": "topic",
+                "description": "The topic or question to search for",
+                "required": True
+            }
+        ]
+    ),
+    Prompt(
+        name="analyze-documentation",
+        description="Analyze and summarize technical documentation from a URL",
+        arguments=[
+            {
+                "name": "url",
+                "description": "The URL of the documentation to analyze",
+                "required": True
+            },
+            {
+                "name": "focus",
+                "description": "Optional: Specific aspect to focus on (e.g., 'API usage', 'installation steps')",
+                "required": False
+            }
+        ]
+    ),
+    Prompt(
+        name="research-topic",
+        description="Perform comprehensive research on a technical topic with multiple sources",
+        arguments=[
+            {
+                "name": "topic",
+                "description": "The technical topic to research",
+                "required": True
+            }
+        ]
+    ),
+    Prompt(
+        name="compare-technologies",
+        description="Compare two or more technologies, frameworks, or tools",
+        arguments=[
+            {
+                "name": "technologies",
+                "description": "Comma-separated list of technologies to compare (e.g., 'React, Vue, Svelte')",
+                "required": True
+            },
+            {
+                "name": "criteria",
+                "description": "Optional: Specific criteria to compare (e.g., 'performance, learning curve, ecosystem')",
+                "required": False
+            }
+        ]
+    ),
+]
+
+RESOURCES = [
+    Resource(
+        uri="gemini://server/info",
+        name="Server Information",
+        description="Information about this Gemini Search MCP server",
+        mimeType="text/plain"
+    ),
+    Resource(
+        uri="gemini://server/capabilities",
+        name="Server Capabilities",
+        description="Available tools and features of this server",
+        mimeType="application/json"
+    ),
+]
+
 
 @app.list_tools()
 async def list_tools():
@@ -144,6 +216,114 @@ async def call_tool(name: str, arguments: dict):
     elif name == "analyze_url":
         return await _handle_analyze_url(arguments)
     return [TextContent(type="text", text=f"Unknown tool: {name}")]
+
+
+@app.list_prompts()
+async def list_prompts():
+    return PROMPTS
+
+
+@app.get_prompt()
+async def get_prompt(name: str, arguments: dict):
+    if name == "web-search":
+        topic = arguments.get("topic", "")
+        return PromptMessage(
+            role="user",
+            content=TextContent(
+                type="text",
+                text=f"Search the web for information about: {topic}\n\n"
+                     f"Please provide a comprehensive answer with sources and citations."
+            )
+        )
+    elif name == "analyze-documentation":
+        url = arguments.get("url", "")
+        focus = arguments.get("focus", "")
+        focus_text = f" Focus specifically on: {focus}" if focus else ""
+        return PromptMessage(
+            role="user",
+            content=TextContent(
+                type="text",
+                text=f"Analyze the documentation at: {url}\n\n"
+                     f"Provide a clear summary of the key points, implementation details, and best practices.{focus_text}"
+            )
+        )
+    elif name == "research-topic":
+        topic = arguments.get("topic", "")
+        return PromptMessage(
+            role="user",
+            content=TextContent(
+                type="text",
+                text=f"Conduct comprehensive research on: {topic}\n\n"
+                     f"Include: current state, best practices, pros/cons, recommendations, and authoritative sources."
+            )
+        )
+    elif name == "compare-technologies":
+        technologies = arguments.get("technologies", "")
+        criteria = arguments.get("criteria", "performance, ease of use, ecosystem, learning curve")
+        return PromptMessage(
+            role="user",
+            content=TextContent(
+                type="text",
+                text=f"Compare the following technologies: {technologies}\n\n"
+                     f"Comparison criteria: {criteria}\n\n"
+                     f"Provide an objective comparison with sources and practical recommendations."
+            )
+        )
+    return PromptMessage(
+        role="user",
+        content=TextContent(type="text", text=f"Unknown prompt: {name}")
+    )
+
+
+@app.list_resources()
+async def list_resources():
+    return RESOURCES
+
+
+@app.read_resource()
+async def read_resource(uri: str):
+    if uri == "gemini://server/info":
+        info_text = f"""Gemini Search MCP Server
+Version: 1.0.0
+Model: {GEMINI_MODEL}
+Status: Active
+
+This server provides AI-powered web search and URL analysis using Google's Gemini API.
+
+Available Tools:
+- search: Search the web with Google Search grounding
+- analyze_url: Deep analysis of webpage content
+
+Features:
+- Real-time web search with citations
+- Full webpage content analysis (HTML, PDF, etc.)
+- Powered by Gemini 2.5 Flash
+- Free tier: 1,500 requests/day
+"""
+        return TextContent(type="text", text=info_text)
+    
+    elif uri == "gemini://server/capabilities":
+        import json
+        capabilities = {
+            "server": "gemini-search",
+            "version": "1.0.0",
+            "model": GEMINI_MODEL,
+            "tools": ["search", "analyze_url"],
+            "prompts": ["web-search", "analyze-documentation", "research-topic", "compare-technologies"],
+            "features": {
+                "google_search_grounding": True,
+                "url_context_analysis": True,
+                "citations": True,
+                "free_tier": True
+            },
+            "limits": {
+                "requests_per_day": 1500,
+                "max_url_size_mb": 34
+            }
+        }
+        return TextContent(type="text", text=json.dumps(capabilities, indent=2))
+    
+    return TextContent(type="text", text=f"Unknown resource: {uri}")
 
 
 async def _handle_search(arguments: dict) -> list[TextContent]:

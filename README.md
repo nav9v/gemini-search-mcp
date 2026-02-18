@@ -2,6 +2,7 @@
 
 > **Open-source Perplexity alternative** for developers. Connect VS Code Copilot, Cline, or Roo to **Google Search** and **Deep Web Analysis** via the Model Context Protocol (MCP).
 
+[![MCP Badge](https://lobehub.com/badge/mcp/nav9v-gemini-mcp-server)](https://lobehub.com/mcp/nav9v-gemini-mcp-server)
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-green?style=flat-square)](https://modelcontextprotocol.io/)
 [![Gemini API](https://img.shields.io/badge/Gemini-2.5_Flash-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
@@ -53,6 +54,8 @@ graph LR
 - 🔍 **Grounding with Google Search:** Uses the official [Google Search Grounding](https://ai.google.dev/gemini-api/docs/google-search) for factual, up-to-date results.
 - 📄 **Deep URL Analysis:** Uses Gemini's [URL Context](https://ai.google.dev/gemini-api/docs/url-context) to read large documents (HTML, PDF) for summarization and QA.
 - 📚 **Citations & Sources:** Every claim is backed by a clickable link, distinguishing it from standard LLM hallucinations.
+- 🎯 **Pre-configured Prompts:** Ready-to-use templates for common research and analysis tasks.
+- 📊 **Resource Access:** Query server capabilities and information dynamically.
 - ✅ **Standard MCP Protocol:** Compatible with any MCP client, including **Cursor**, **Windsurf**, and **VS Code**.
 - ⚡ **Low Latency:** Powered by `gemini-2.5-flash`, optimized for speed and low cost.
 - 🆓 **100% Free Tier:** Works with the free Google AI Studio API key (no credit card required).
@@ -65,6 +68,24 @@ graph LR
 |---|---|---|
 | `search` | **AI Web Search.** Searches Google and summarizes results using Gemini. Returns sources. | "How do I center a div in Tailwind 4?" or "Latest features in Python 3.13" |
 | `analyze_url` | **Deep Page Reader.** Ingests the content of a specific URL (HTML/PDF/Text) into context. | "Read this documentation page and explain the implementation details." |
+
+## Available Prompts
+
+Pre-configured prompts to make common tasks easier:
+
+| Prompt | Description | Arguments |
+|---|---|---|
+| `web-search` | Search the web for up-to-date information | `topic` (required) |
+| `analyze-documentation` | Analyze and summarize technical documentation | `url` (required), `focus` (optional) |
+| `research-topic` | Comprehensive research with multiple sources | `topic` (required) |
+| `compare-technologies` | Compare technologies/frameworks/tools | `technologies` (required), `criteria` (optional) |
+
+## Available Resources
+
+| Resource | URI | Description |
+|---|---|---|
+| Server Information | `gemini://server/info` | Details about the server version and capabilities |
+| Server Capabilities | `gemini://server/capabilities` | JSON of all features, tools, and limits |
 
 ---
 
@@ -115,22 +136,39 @@ Edit your MCP config file:
 *   **Windows:** `%APPDATA%\Code\User\mcp.json`
 *   **Mac/Linux:** `~/Library/Application Support/Code/User/mcp.json`
 
-Add this entry to the `mcpServers` object (or `servers` for older configs):
-
+**Option 1: Using working directory (Recommended)**
 ```json
 {
   "mcpServers": {
     "gemini-search": {
-      "command": "c:/absolute/path/to/.venv/Scripts/python.exe",
-      "args": ["c:/absolute/path/to/gemini_search_mcp.py"],
+      "command": "python",
+      "args": ["gemini_search_mcp.py"],
+      "cwd": "C:/absolute/path/to/gemini-search-mcp",
       "env": {
-        "GEMINI_API_KEY": "your_key_here_if_not_using_env_file"
+        "PYTHONPATH": "C:/absolute/path/to/gemini-search-mcp"
       }
     }
   }
 }
 ```
-> **Note:** Replace `/absolute/path/to/` with the full path to your cloned folder. The server loads `.env` automatically, so you don't strictly need the `env` block in JSON if `.env` is present.
+
+**Option 2: Using virtual environment**
+```json
+{
+  "mcpServers": {
+    "gemini-search": {
+      "command": "C:/absolute/path/to/.venv/Scripts/python.exe",
+      "args": ["C:/absolute/path/to/gemini_search_mcp.py"]
+    }
+  }
+}
+```
+
+> **Note:** 
+> - Replace `C:/absolute/path/to/` with the full path to your cloned folder
+> - Use forward slashes (`/`) or double backslashes (`\\`) in paths
+> - The server loads `.env` automatically, so you don't need the `env` block if using `.env`
+> - See [mcp.json.example](mcp.json.example) for a template
 
 ### 5. Reload VS Code
 
@@ -140,12 +178,28 @@ Press `Ctrl+Shift+P` → **Developer: Reload Window**.
 
 ## 💬 Usage Examples
 
+### Using Tools Directly
+
 Open **Copilot Chat** (or your MCP client) and ask:
 
 *   **"Search for the latest Next.js 15 breaking changes."** (Triggers `search`)
 *   **"Analyze this page: https://docs.python.org/3/whatsnew/3.13.html"** (Triggers `analyze_url`)
 *   **"What are the best open source alternatives to Vercel in 2026?"**
 *   **"Read the docs at https://fastapi.tiangolo.com/ and explain how to use dependency injection."**
+
+### Using Prompts (Recommended)
+
+Prompts provide structured templates for common tasks:
+
+*   **Web Search:** Use the `web-search` prompt with a topic
+*   **Documentation Analysis:** Use the `analyze-documentation` prompt with a URL
+*   **Research:** Use the `research-topic` prompt for comprehensive research
+*   **Comparison:** Use the `compare-technologies` prompt to compare tools/frameworks
+
+Example in VS Code Copilot:
+```
+@gemini-search #web-search topic="Python async best practices 2026"
+```
 
 ---
 
@@ -188,6 +242,8 @@ No credit card required. Perfect for individual developers, students, and protot
 | **Engine** | **Google** (Grounding) | Brave Index | Tavily Index | Perplexity |
 | **Full Page Read** | ✅ **Yes** (huge context) | ❌ No | ❌ No | ❌ No |
 | **Citations** | ✅ Inline Links | ✅ | ✅ | ✅ |
+| **Prompts** | ✅ **4 Pre-configured** | ❌ No | ❌ No | ❌ No |
+| **Resources** | ✅ **Server Info** | ❌ No | ❌ No | N/A |
 | **Cost** | 🆓 **Free** (1.5k/day) | 🆓 Limited | 🆓 Limited | 💸 $20/mo |
 | **Privacy** | 🔒 Local Client* | 🔒 Local Client | ☁️ API | ☁️ API |
 
@@ -198,18 +254,59 @@ No credit card required. Perfect for individual developers, students, and protot
 ## 🛠 Troubleshooting
 
 <details>
+<summary><strong>Test Server Manually</strong></summary>
+
+Before configuring VS Code, test the server directly:
+
+```powershell
+# Activate virtual environment first
+.venv\Scripts\Activate.ps1
+
+# Run the server
+python gemini_search_mcp.py
+```
+
+The server should start without errors. Press `Ctrl+C` to stop.
+</details>
+
+<details>
 <summary><strong>Verify Installation</strong></summary>
 
 1.  Open VS Code Output panel (`Ctrl+Shift+U`).
 2.  Select **"MCP Review"** or **"Github Copilot Default"** from the dropdown.
 3.  Look for `gemini-search` in the logs.
+4.  Check for any error messages or connection issues.
 </details>
 
 <details>
 <summary><strong>"GEMINI_API_KEY is not set"</strong></summary>
 
 - Ensure `.env` is in the **same folder** as the script.
-- Verify the path in `mcp.json` is absolute: `c:/Users/.../gemmini mcp/gemini_search_mcp.py`.
+- Verify the path in `mcp.json` is absolute: `c:/Users/.../gemini-search-mcp/gemini_search_mcp.py`.
+- Check that `.env` contains a valid API key without quotes or spaces.
+- Test locally: `python -c "from dotenv import load_dotenv; import os; load_dotenv(); print(os.getenv('GEMINI_API_KEY'))"`
+</details>
+
+<details>
+<summary><strong>Server Not Appearing in VS Code</strong></summary>
+
+1.  Verify `mcp.json` syntax is valid (use a JSON validator).
+2.  Ensure paths use forward slashes or double backslashes.
+3.  Check that Python is accessible from the command line: `python --version`
+4.  Try using absolute path to Python executable in virtual environment.
+5.  Reload VS Code window: `Ctrl+Shift+P` → **Developer: Reload Window**
+</details>
+
+<details>
+<summary><strong>Validation Failed</strong></summary>
+
+If the MCP server validation fails:
+
+1.  Ensure all dependencies are installed: `pip install -r requirements.txt`
+2.  Check that the `google-genai` package is properly installed: `pip show google-genai`
+3.  Verify your API key is valid at [Google AI Studio](https://aistudio.google.com/apikey)
+4.  Test the server manually before adding to VS Code
+5.  Check that prompts and resources are properly defined (this MCP server includes them)
 </details>
 
 ---
