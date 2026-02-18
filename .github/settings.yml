@@ -1,25 +1,18 @@
+# Settings for repository-settings app
+# See https://github.com/repository-settings/app
+
 repository:
+  # A short description of the repository that will show up on GitHub
   description: "Free AI Web Search & Grounding for VS Code. Open-source Perplexity alternative powered by Gemini, Google Search, and Deep Page Analysis (MCP Server)."
-  topics:
-    - mcp-server
-    - gemini-api
-    - vscode-extension
-    - google-search-grounding
-    - ai-search
-    - perplexity-alternative
-    - web-grounding
-    - deep-research
-    - model-context-protocol
-    - copilot-tools
-    - llm-tool-use
-    - open-source-ai
-    - python
-    - developer-tools
-    - free-api
-    - generative-ai
-    - coding-assistant
-    - agent-tools
-    - vscode
-    - prompt-engineering
-    - context-aware
-    - google-ai-studio
+  
+  # A comma-separated list of topics to set on the repository
+  topics: mcp-server, gemini-api, vscode-extension, google-search-grounding, ai-search, perplexity-alternative, web-grounding, deep-research, model-context-protocol, copilot-tools, llm-tool-use, open-source-ai, python, developer-tools, free-api, generative-ai, coding-assistant, agent-tools, vscode, prompt-engineering, context-aware, google-ai-studio
+  
+  # Either `true` to enable issues for this repository, `false` to disable them
+  has_issues: true
+  
+  # Either `true` to enable the wiki for this repository, `false` to disable it
+  has_wiki: false
+  
+  # Either `true` to enable automatic deletion of branches on merge, or `false` to disable
+  delete_branch_on_merge: true
